@@ -15,13 +15,11 @@ services:
     image: mysql:5.7
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: p_point_root
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: p_point
       MYSQL_USER: p_point_user
       MYSQL_PASSWORD: 123456789a
-    hostname: mysql
-    ports:
-      - "3306:3306"
+    container_name: mysql-container
     volumes:
       - ./docker/db/conf.d:/etc/mysql/conf.d
       - ./log/mysql:/var/log/mysql

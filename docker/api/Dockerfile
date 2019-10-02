@@ -7,6 +7,5 @@ RUN go get -u github.com/gin-gonic/gin \
   && go get github.com/jinzhu/gorm \
   && go get github.com/go-sql-driver/mysql
 
-RUN cd /go/src/github.com/p-point && go build -o bin/p-point src/api/main.go
-
-CMD ["go", "run", "src/api/main.go"]
+RUN cd /go/src/github.com/p-point
+CMD ["go", "run", "/go/src/github.com/p-point/main.go"]

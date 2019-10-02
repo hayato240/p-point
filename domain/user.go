@@ -1,4 +1,4 @@
-package model
+package domain
 
 import (
 	"github.com/jinzhu/gorm"
@@ -6,5 +6,5 @@ import (
 
 type User struct {
 	gorm.Model
-	amount      int       `json:age`
+	amount      int       `json:amount`
 }
