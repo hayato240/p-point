@@ -1,10 +1,8 @@
 package domain
 
-import (
-	"github.com/jinzhu/gorm"
-)
+type Users []User
 
 type User struct {
-	gorm.Model
-	amount      int       `json:amount`
+	ID        int
+	Amount 	  int
 }
