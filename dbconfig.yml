@@ -1,0 +1,4 @@
+development:
+  dialect: mysql
+  dir: db/migrations
+  datasource: p_point_user:123456789a@tcp(mysql)/p_point?charset=utf8mb4&collation=utf8mb4_general_ci&parseTime=true

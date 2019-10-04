@@ -10,16 +10,31 @@ services:
       - "8080:8080"
     volumes:
       - ./src/api:/go/src/api
+    environment:
+      MYSQL_DB_HOST: mysql
+      MYSQL_DB: p_point
+      MYSQL_PORT: 3306
+      MYSQL_USER: p_point_user
+      MYSQL_PASSWORD: 123456789a
+    depends_on:
+      - mysql
+    restart: always
+
   mysql:
     build: ./docker/db
     image: mysql:5.7
     restart: always
+    container_name: mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: p_point
       MYSQL_USER: p_point_user
       MYSQL_PASSWORD: 123456789a
-    container_name: mysql
     volumes:
       - ./docker/db/conf.d:/etc/mysql/conf.d
       - ./log/mysql:/var/log/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
