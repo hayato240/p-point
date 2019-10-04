@@ -5,5 +5,6 @@ import (
 )
 
 func main() {
+	infrastructure.Migrate()
 	infrastructure.Router.Run(":8080")
 }
