@@ -11,8 +11,13 @@ type UserInteractor struct {
 func (interactor *UserInteractor) Add(u domain.User) (user domain.User, err error) {
 	identify, err := interactor.UserRepository.Add(u)
 	if err != nil {
-		return  user, err
+		return user, err
 	}
 	user, err = interactor.UserRepository.FindById(identify)
+	return user, nil
+}
+
+func (interactor *UserInteractor) Show(u domain.user) (user domain.User, err error) {
+	user, err = interactor.UserRepository.FindById(u.id)
 	return user, nil
 }
