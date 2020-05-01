@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"log"
+
 	"github.com/p-point/domain"
 	"github.com/p-point/interfaces/database"
 	"github.com/p-point/usecase"
+	"gopkg.in/go-playground/validator.v9"
 )
 
 type UserController struct {
@@ -32,8 +35,14 @@ func (controller *UserController) Create(c Context) {
 }
 
 func (controller *UserController) Show(c Context) {
+	validate := validator.New()
 	u := domain.User{}
 	c.Bind(&u)
+
+	if err := validate.Struct(c); err != nil {
+		log.Fatal(err)
+	}
+
 	user, err := controller.Interactor.Show(u)
 	if err != nil {
 		c.JSON(500, err)

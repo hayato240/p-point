@@ -18,6 +18,6 @@ func (interactor *UserInteractor) Add(u domain.User) (user domain.User, err erro
 }
 
 func (interactor *UserInteractor) Show(u domain.user) (user domain.User, err error) {
-	user, err = interactor.UserRepository.FindById(u.id)
+	user, err = interactor.UserRepository.FindById(u.ID)
 	return user, nil
 }
