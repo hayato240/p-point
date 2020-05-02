@@ -7,7 +7,6 @@ import (
 	"github.com/p-point/interfaces/database"
 	"os"
 	"strings"
-	"github.com/rubenv/sql-migrate"
 )
 
 type SqlHandler struct {
@@ -46,16 +45,6 @@ func getConnectionString() string {
 	}
 	return fmt.Sprintf("%s:%s@%s([%s]:%s)/%s%s",
 		user, pass, protocol, host, port, dbname, dbargs)
-}
-
-func Migrate() (err error) {
-	connectionString := getConnectionString()
-	conn, err := sql.Open("mysql", connectionString)
-
-	if err != nil {
-		panic(err)
-	}
-
 }
 
 func NewSqlHandler() database.SqlHandler {

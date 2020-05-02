@@ -33,5 +33,5 @@ func (controller *UserController) Create(c Context) {
 }
 
 func (controller *UserController) Show(c Context) {
-	c.JSON(200, errors.New("Not Implement"))
+	c.JSON(500, errors.New("Not Implement"))
 }
