@@ -12,5 +12,6 @@ func init() {
 	userController := controllers.NewUserController(NewSqlHandler())
 	router.POST("/users", func(c *gin.Context) { userController.Create(c) })
 	router.GET("/users/:id", func(c *gin.Context) { userController.Show(c) })
+	router.POST("/users/update", func(c *gin.Context) { userController.Update(c) })
 	Router = router
 }
