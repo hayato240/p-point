@@ -8,7 +8,7 @@ type UserRepository struct {
 
 func (repo *UserRepository) Add(u domain.User) (id int, err error) {
 	result, err := repo.Execute("Insert INTO users (amount) VALUES (?)", u.Amount)
-	if err != nil{
+	if err != nil {
 		return
 	}
 	id64, err := result.LastInsertId()
@@ -16,7 +16,7 @@ func (repo *UserRepository) Add(u domain.User) (id int, err error) {
 		return
 	}
 	id = int(id64)
-	return
+	return id, nil
 }
 
 func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
@@ -35,4 +35,17 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	user.ID = id
 	user.Amount = amount
 	return user, nil
+}
+
+func (repo *UserRepository) Update(u domain.User) (id int, err error) {
+	result, err := repo.Execute("UPDATE users SET amount = ? WHERE id = ?", u.Amount, u.ID)
+	if err != nil {
+		return
+	}
+	id64, err := result.LastInsertId()
+	if err != nil {
+		return
+	}
+	id = int(id64)
+	return id, nil
 }
