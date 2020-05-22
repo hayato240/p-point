@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/p-point/interfaces/database"
+	"github.com/hayato240/p-point/interfaces/database"
 	"os"
 	"strings"
 )
