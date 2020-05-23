@@ -52,7 +52,7 @@ func (controller *UserController) Show(c Context) {
 	c.JSON(200, user)
 }
 
-func (controller *UserController) Update(c context) {
+func (controller *UserController) Update(c Context) {
 	u := domain.User{}
 	c.Bind(&u)
 

@@ -1,9 +1,19 @@
 package database
 
-import "github.com/p-point/domain"
+import (
+	"log"
+
+	"github.com/p-point/domain"
+)
 
 type UserRepository struct {
 	SqlHandler
+}
+
+type TrashScanner struct{}
+
+func (TrashScanner) Scan(interface{}) error {
+	return nil
 }
 
 func (repo *UserRepository) Add(u domain.User) (id int, err error) {
@@ -23,29 +33,38 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	row, err := repo.Query("SELECT * FROM users WHERE id = ?", identifier)
 	user := domain.User{}
 	defer row.Close()
+
 	if err != nil {
+		log.Fatal(err)
 		return user, err
 	}
+
 	var id int
 	var amount int
 	row.Next()
-	if err = row.Scan(&id, &amount); err != nil {
+	if err = row.Scan(
+		&id,
+		&amount,
+		TrashScanner{},
+	); err != nil {
+		log.Fatal(err)
 		return user, err
 	}
+
 	user.ID = id
 	user.Amount = amount
 	return user, nil
 }
 
 func (repo *UserRepository) Update(u domain.User) (id int, err error) {
-	result, err := repo.Execute("UPDATE users SET amount = ? WHERE id = ?", u.Amount, u.ID)
+	user, err := repo.FindById(u.ID)
+	var newAmount int
+	newAmount = int(user.Amount) + u.Amount
+
+	result, err := repo.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
 	if err != nil {
 		return
 	}
-	id64, err := result.LastInsertId()
-	if err != nil {
-		return
-	}
-	id = int(id64)
-	return id, nil
+
+	return user.ID, nil
 }
