@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/p-point/infrastructure"
+	"github.com/hayato240/p-point/infrastructure"
 )
 
 func main() {
