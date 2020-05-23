@@ -51,11 +51,11 @@ func (controller *UserController) Show(c Context) {
 	c.JSON(200, user)
 }
 
-func (controller *UserController) Update(c Context) {
+func (controller *UserController) PointUp(c Context) {
 	u := domain.User{}
 	c.Bind(&u)
 
-	user, err := controller.Interactor.Update(u)
+	user, err := controller.Interactor.PointUp(u)
 	if err != nil {
 		c.JSON(500, err)
 		return

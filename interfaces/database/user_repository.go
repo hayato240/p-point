@@ -1,6 +1,7 @@
 package database
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/hayato240/p-point/domain"
@@ -56,7 +57,7 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) Update(u domain.User) (id int, err error) {
+func (repo *UserRepository) PointUp(u domain.User) (id int, err error) {
 	user, err := repo.FindById(u.ID)
 	var newAmount int
 	newAmount = int(user.Amount) + u.Amount
@@ -65,6 +66,13 @@ func (repo *UserRepository) Update(u domain.User) (id int, err error) {
 	if err != nil {
 		return
 	}
+
+	rowAffect, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("lastInsetのエラーは%v", err)
+		return
+	}
+	fmt.Printf("rowAffectは%v", rowAffect)
 
 	return user.ID, nil
 }

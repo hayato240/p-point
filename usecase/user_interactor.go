@@ -22,8 +22,8 @@ func (interactor *UserInteractor) Show(id int) (user domain.User, err error) {
 	return user, nil
 }
 
-func (interactor *UserInteractor) Update(u domain.User) (user domain.User, err error) {
-	identify, err := interactor.UserRepository.Update(u)
+func (interactor *UserInteractor) PointUp(u domain.User) (user domain.User, err error) {
+	identify, err := interactor.UserRepository.PointUp(u)
 	if err != nil {
 		return user, err
 	}
