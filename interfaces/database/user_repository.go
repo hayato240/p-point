@@ -1,6 +1,6 @@
 package database
 
-import "github.com/p-point/domain"
+import "github.com/hayato240/p-point/domain"
 
 type UserRepository struct {
 	SqlHandler
