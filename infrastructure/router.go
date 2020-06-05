@@ -2,7 +2,7 @@ package infrastructure
 
 import (
 	gin "github.com/gin-gonic/gin"
-	"github.com/p-point/interfaces/controllers"
+	"github.com/hayato240/p-point/interfaces/controllers"
 )
 
 var Router *gin.Engine
