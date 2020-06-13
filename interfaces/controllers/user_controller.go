@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"errors"
+	"reflect"
 	"strconv"
 
 	"github.com/p-point/domain"
@@ -34,15 +36,14 @@ func (controller *UserController) Create(c Context) {
 }
 
 func (controller *UserController) Show(c Context) {
-	// validate := validator.New()
 	u := domain.User{}
 	c.Bind(&u)
 
-	// if err := validate.Struct(c); err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	identifier, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(400, err)
+		return
+	}
 
 	user, err := controller.Interactor.Show(identifier)
 	if err != nil {
@@ -52,11 +53,24 @@ func (controller *UserController) Show(c Context) {
 	c.JSON(200, user)
 }
 
-func (controller *UserController) PointUp(c Context) {
+func (controller *UserController) Points(c Context) {
 	u := domain.User{}
 	c.Bind(&u)
 
-	user, err := controller.Interactor.PointUp(u)
+	identifier, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(400, err)
+		return
+	}
+
+	u.ID = identifier
+
+	if reflect.TypeOf(u.Amount).Kind() != reflect.Int {
+		errors.New("type of Amount is other than int")
+		return
+	}
+
+	user, err := controller.Interactor.Points(u)
 	if err != nil {
 		c.JSON(500, err)
 		return

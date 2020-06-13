@@ -23,11 +23,13 @@ func (repo *UserRepository) Add(u domain.User) (id int, err error) {
 		return
 	}
 	id64, err := result.LastInsertId()
+	fmt.Printf("errは%v", err)
+	fmt.Printf("id64は%v", id64)
 	if err != nil {
 		return
 	}
 	id = int(id64)
-	return id, nil
+	return
 }
 
 func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
@@ -57,22 +59,17 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) PointUp(u domain.User) (id int, err error) {
+func (repo *UserRepository) Points(u domain.User) (id int, err error) {
 	user, err := repo.FindById(u.ID)
 	var newAmount int
 	newAmount = int(user.Amount) + u.Amount
 
-	result, err := repo.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+	_, err = repo.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
 	if err != nil {
 		return
 	}
 
-	rowAffect, err := result.RowsAffected()
-	if err != nil {
-		fmt.Printf("lastInsetのエラーは%v", err)
-		return
-	}
-	fmt.Printf("rowAffectは%v", rowAffect)
+	id = int(user.ID)
 
-	return user.ID, nil
+	return
 }

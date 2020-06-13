@@ -22,12 +22,15 @@ func (interactor *UserInteractor) Show(id int) (user domain.User, err error) {
 	return user, nil
 }
 
-func (interactor *UserInteractor) PointUp(u domain.User) (user domain.User, err error) {
-	identify, err := interactor.UserRepository.PointUp(u)
+func (interactor *UserInteractor) Points(u domain.User) (user domain.User, err error) {
+	identify, err := interactor.UserRepository.Points(u)
 	if err != nil {
 		return user, err
 	}
 
 	user, err = interactor.UserRepository.FindById(identify)
+	if err != nil {
+		return user, err
+	}
 	return user, nil
 }
