@@ -14,11 +14,17 @@ func (interactor *UserInteractor) Add(u domain.User) (user domain.User, err erro
 		return user, err
 	}
 	user, err = interactor.UserRepository.FindById(identify)
+	if err != nil {
+		return user, err
+	}
 	return user, nil
 }
 
 func (interactor *UserInteractor) Show(id int) (user domain.User, err error) {
 	user, err = interactor.UserRepository.FindById(id)
+	if err != nil {
+		return user, err
+	}
 	return user, nil
 }
 

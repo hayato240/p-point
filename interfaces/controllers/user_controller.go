@@ -66,7 +66,8 @@ func (controller *UserController) Points(c Context) {
 	u.ID = identifier
 
 	if reflect.TypeOf(u.Amount).Kind() != reflect.Int {
-		errors.New("type of Amount is other than int")
+		err = errors.New("type of Amount is not int")
+		c.JSON(400, err)
 		return
 	}
 
