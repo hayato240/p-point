@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/p-point/domain"
+	"github.com/hayato240/p-point/domain"
 )
 
 type UserRepository struct {
@@ -59,6 +59,7 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
+//Points :adds points to User.
 func (repo *UserRepository) Points(u domain.User) (id int, err error) {
 	user, err := repo.FindById(u.ID)
 	var newAmount int

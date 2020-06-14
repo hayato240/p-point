@@ -3,10 +3,11 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/p-point/interfaces/database"
 	"os"
 	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/hayato240/p-point/interfaces/database"
 )
 
 type SqlHandler struct {
@@ -59,7 +60,7 @@ func NewSqlHandler() database.SqlHandler {
 	return sqlHandler
 }
 
-func (handler *SqlHandler) Execute(statement string, args ...interface{})(database.Result, error){
+func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
 	res := SqlResult{}
 	result, err := handler.Conn.Exec(statement, args...)
 	if err != nil {

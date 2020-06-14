@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/p-point/domain"
-	"github.com/p-point/interfaces/database"
-	"github.com/p-point/usecase"
+	"github.com/hayato240/p-point/domain"
+	"github.com/hayato240/p-point/interfaces/database"
+	"github.com/hayato240/p-point/usecase"
 )
 
 type UserController struct {

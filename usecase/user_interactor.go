@@ -1,7 +1,7 @@
 package usecase
 
 import (
-	"github.com/p-point/domain"
+	"github.com/hayato240/p-point/domain"
 )
 
 type UserInteractor struct {
