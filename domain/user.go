@@ -3,6 +3,7 @@ package domain
 type Users []User
 
 type User struct {
-	ID        int
-	Amount 	  int
+	ID     int
+	Amount int
+	date   string
 }
