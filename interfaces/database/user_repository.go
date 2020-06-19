@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/hayato240/p-point/domain"
+	"github.com/p-point/domain"
+	"github.com/pkg/errors"
 )
 
 type UserRepository struct {
@@ -61,11 +62,35 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 
 //Points :adds points to User.
 func (repo *UserRepository) Points(u domain.User) (id int, err error) {
+	tx, err := repo.Begin()
+	if err != nil {
+	}
+
+	defer func() {
+		if err != nil {
+			if re := tx.Rollback(); re != nil {
+				err = errors.Wrap(err, re.Error())
+			}
+		}
+	}()
+
 	user, err := repo.FindById(u.ID)
+	if err != nil {
+		return
+	}
 	var newAmount int
 	newAmount = int(user.Amount) + u.Amount
 
-	_, err = repo.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+	_, err = tx.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+	if err != nil {
+		return
+	}
+	_, err = tx.Execute("insert INTO point_hisotry (user_id, amount) VALUES (?, ?)", user.ID, u.Amount)
+	if err != nil {
+		return
+	}
+
+	err = tx.Commit()
 	if err != nil {
 		return
 	}

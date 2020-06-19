@@ -6,8 +6,7 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/hayato240/p-point/interfaces/database"
+	"github.com/p-point/interfaces/database"
 )
 
 type SqlHandler struct {
@@ -20,6 +19,10 @@ type SqlResult struct {
 
 type SqlRow struct {
 	Rows *sql.Rows
+}
+
+type SqlTx struct {
+	Tx sql.Tx
 }
 
 func getParamString(param string, defaultValue string) string {
@@ -79,4 +82,14 @@ func (handler *SqlHandler) Query(statement string, args ...interface{}) (databas
 	row.Rows = rows
 
 	return row.Rows, nil
+}
+
+func (handler *SqlHandler) Begin() (database.Tx, error) {
+	res := SqlTx{}
+	tx, err := handler.Conn.Begin()
+	if err != nil {
+		return res.Tx, err
+	}
+	res.Tx = tx
+	return res.Tx, nil
 }
