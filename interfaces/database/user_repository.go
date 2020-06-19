@@ -1,11 +1,11 @@
 package database
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
-	"github.com/p-point/domain"
-	"github.com/pkg/errors"
+	"github.com/hayato240/p-point/domain"
 )
 
 type UserRepository struct {

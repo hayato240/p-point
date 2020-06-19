@@ -6,7 +6,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/p-point/interfaces/database"
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/hayato240/p-point/interfaces/database"
 )
 
 type SqlHandler struct {
