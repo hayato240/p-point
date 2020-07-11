@@ -1,10 +1,10 @@
 package database
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/hayato240/p-point/domain"
+	"github.com/pkg/errors"
 )
 
 type UserRepository struct {
@@ -57,22 +57,42 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) PointUp(u domain.User) (id int, err error) {
+//Points :adds points to User.
+func (repo *UserRepository) Points(u domain.User) (id int, err error) {
+	tx, err := repo.Begin()
+	if err != nil {
+	}
+
+	defer func() {
+		if err != nil {
+			if re := tx.Rollback(); re != nil {
+				err = errors.Wrap(err, re.Error())
+			}
+		}
+	}()
+
 	user, err := repo.FindById(u.ID)
+	if err != nil {
+		return
+	}
 	var newAmount int
 	newAmount = int(user.Amount) + u.Amount
 
-	result, err := repo.Execute("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+	_, err = tx.Exec("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+	if err != nil {
+		return
+	}
+	_, err = tx.Exec("insert INTO point_hisotry (user_id, amount) VALUES (?, ?)", user.ID, u.Amount)
 	if err != nil {
 		return
 	}
 
-	rowAffect, err := result.RowsAffected()
+	err = tx.Commit()
 	if err != nil {
-		fmt.Printf("lastInsetのエラーは%v", err)
 		return
 	}
-	fmt.Printf("rowAffectは%v", rowAffect)
 
-	return user.ID, nil
+	id = int(user.ID)
+
+	return
 }
