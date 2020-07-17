@@ -1,10 +1,10 @@
 package database
 
 import (
+	"database/sql"
 	"log"
 
 	"github.com/hayato240/p-point/domain"
-	"github.com/pkg/errors"
 )
 
 type UserRepository struct {
@@ -57,42 +57,28 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
-//Points :adds points to User.
 func (repo *UserRepository) Points(u domain.User) (id int, err error) {
-	tx, err := repo.Begin()
-	if err != nil {
-	}
-
-	defer func() {
+	err = repo.SqlHandler.Transaction(func(tx *sql.Tx) error {
+		user, err := repo.FindById(u.ID)
 		if err != nil {
-			if re := tx.Rollback(); re != nil {
-				err = errors.Wrap(err, re.Error())
-			}
+			return err
 		}
-	}()
-
-	user, err := repo.FindById(u.ID)
+		var newAmount int
+		newAmount = user.Amount + u.Amount
+		log.Printf("a:: %#v",newAmount)
+		_, err = tx.Exec("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+		if err != nil {
+			return err
+		}
+		_, err = tx.Exec("INSERT INTO point_histories (user_id, amount) VALUES (?, ?)", user.ID, u.Amount)
+		if err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
-		return
+		log.Fatal("panic")
+		log.Fatal(err)
 	}
-	var newAmount int
-	newAmount = int(user.Amount) + u.Amount
-
-	_, err = tx.Exec("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
-	if err != nil {
-		return
-	}
-	_, err = tx.Exec("insert INTO point_hisotry (user_id, amount) VALUES (?, ?)", user.ID, u.Amount)
-	if err != nil {
-		return
-	}
-
-	err = tx.Commit()
-	if err != nil {
-		return
-	}
-
-	id = int(user.ID)
-
-	return
+	return u.ID, nil
 }
