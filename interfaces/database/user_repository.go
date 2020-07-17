@@ -46,7 +46,6 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	if err = row.Scan(
 		&id,
 		&amount,
-		TrashScanner{},
 	); err != nil {
 		log.Fatal(err)
 		return user, err
