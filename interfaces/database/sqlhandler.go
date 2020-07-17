@@ -1,9 +1,12 @@
 package database
 
+import "database/sql"
+
 type SqlHandler interface {
 	Execute(string, ...interface{}) (Result, error)
 	Query(string, ...interface{}) (Row, error)
 	Begin() (Tx, error)
+	Transaction(txFunc func(*sql.Tx) error) error
 }
 
 type Result interface {
