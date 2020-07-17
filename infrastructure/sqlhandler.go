@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -92,4 +93,29 @@ func (handler *SqlHandler) Begin() (database.Tx, error) {
 	}
 
 	return tx, nil
+}
+
+
+//　Transaction
+func (handler *SqlHandler) Transaction(txFunc func(*sql.Tx) error) error {
+	tx, err := handler.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			log.Println("recover")
+			tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			log.Println("rollback")
+			tx.Rollback()
+		} else {
+			log.Println("commit")
+			err = tx.Commit()
+		}
+	}()
+	err = txFunc(tx)
+	return err
 }
