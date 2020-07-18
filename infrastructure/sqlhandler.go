@@ -3,10 +3,12 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/hayato240/p-point/interfaces/database"
+	"log"
 	"os"
 	"strings"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/hayato240/p-point/interfaces/database"
 )
 
 type SqlHandler struct {
@@ -19,6 +21,10 @@ type SqlResult struct {
 
 type SqlRow struct {
 	Rows *sql.Rows
+}
+
+type SqlTx struct {
+	Tx sql.Tx
 }
 
 func getParamString(param string, defaultValue string) string {
@@ -59,7 +65,7 @@ func NewSqlHandler() database.SqlHandler {
 	return sqlHandler
 }
 
-func (handler *SqlHandler) Execute(statement string, args ...interface{})(database.Result, error){
+func (handler *SqlHandler) Execute(statement string, args ...interface{}) (database.Result, error) {
 	res := SqlResult{}
 	result, err := handler.Conn.Exec(statement, args...)
 	if err != nil {
@@ -78,4 +84,38 @@ func (handler *SqlHandler) Query(statement string, args ...interface{}) (databas
 	row.Rows = rows
 
 	return row.Rows, nil
+}
+
+func (handler *SqlHandler) Begin() (database.Tx, error) {
+	tx, err := handler.Begin()
+	if err != nil {
+		return tx, err
+	}
+
+	return tx, nil
+}
+
+
+//　Transaction
+func (handler *SqlHandler) Transaction(txFunc func(*sql.Tx) error) error {
+	tx, err := handler.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		if p := recover(); p != nil {
+			log.Println("recover")
+			tx.Rollback()
+			panic(p)
+		} else if err != nil {
+			log.Println("rollback")
+			tx.Rollback()
+		} else {
+			log.Println("commit")
+			err = tx.Commit()
+		}
+	}()
+	err = txFunc(tx)
+	return err
 }
