@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"database/sql"
 	"errors"
 	"reflect"
 	"testing"
@@ -25,6 +26,10 @@ func (m *mockUserRepository) FindById(i int) (domain.User, error) {
 
 func (m *mockUserRepository) Points(u domain.User) (int, error) {
 	return m.mockedPoints(u)
+}
+
+func (m *mockUserRepository) UpdateAmount(tx *sql.Tx) error {
+	panic("panic test")
 }
 
 func TestUserInteractor_Add(t *testing.T) {

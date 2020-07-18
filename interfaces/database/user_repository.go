@@ -64,12 +64,12 @@ func (repo *UserRepository) Points(u domain.User) (id int, err error) {
 		}
 		var newAmount int
 		newAmount = user.Amount + u.Amount
-		log.Printf("a:: %#v",newAmount)
-		_, err = tx.Exec("UPDATE users SET amount = ? WHERE id = ?", newAmount, user.ID)
+		log.Printf("a:: %#v", newAmount)
+		err = repo.UpdateAmount(tx, newAmount, user.ID)
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec("INSERT INTO point_histories (user_id, amount) VALUES (?, ?)", user.ID, u.Amount)
+		_, err = tx.Exec("INSERT INTO point_histories (user_id, amount) VALUES (?, ?)", user.ID, u.Amount) // TODO(Sho): method化 7/18
 		if err != nil {
 			return err
 		}
@@ -80,4 +80,13 @@ func (repo *UserRepository) Points(u domain.User) (id int, err error) {
 		log.Fatal(err)
 	}
 	return u.ID, nil
+}
+
+func (repo *UserRepository) UpdateAmount(tx *sql.Tx, newAmount int, userID int) error {
+	_, err := tx.Exec("UPDATE users SET amount = ? WHERE id = ?", newAmount, userID) // TODO(Sho): method化 7/18
+	return err
+}
+
+func (repo *UserRepository) AddPointHistory() {
+
 }
