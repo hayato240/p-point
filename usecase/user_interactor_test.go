@@ -14,7 +14,7 @@ type mockUserRepository struct {
 	mockedAdd             func(u domain.User) (int, error)
 	mockedFindById        func(int) (domain.User, error)
 	mockedPoints          func(u domain.User) (int, error)
-	mockedUpdateAmout     func(int, int) error // TODO(Sho): ここにmock用のメソッドを書き込む。
+	mockedUpdateAmount    func(int, int) error // TODO(Sho): ここにmock用のメソッドを書き込む。
 	mockedAddPointHistory func(int, int) error // TODO(Sho): ここにmock用のメソッドを書き込む。
 }
 
@@ -31,7 +31,7 @@ func (m *mockUserRepository) AddPoints(u domain.User) (int, error) {
 }
 
 func (m *mockUserRepository) UpdateAmount(tx *sql.Tx, newAmount int, userID int) error {
-	return m.mockedUpdateAmout(newAmount, userID)
+	return m.mockedUpdateAmount(newAmount, userID)
 }
 
 func (m *mockUserRepository) AddPointHistory(tx *sql.Tx, userID int, AddedAmount int) error {
@@ -190,7 +190,6 @@ func TestUserInteractor_AddPoints(t *testing.T) {
 						return reqUser, nil
 					},
 					mockedPoints: func(u domain.User) (int, error) { // TODO(Sho): ここにUpdateAmountMethodとAddPointHistoryメソッドを入れる。
-
 						reqUser.Amount = reqUser.Amount + u.Amount
 						return reqUser.ID, nil
 					},
@@ -210,13 +209,7 @@ func TestUserInteractor_AddPoints(t *testing.T) {
 						return reqUser, nil
 					},
 					mockedPoints: func(u domain.User) (int, error) {
-
 						return reqUser.ID, errors.New("failed adding points")
-					},
-					mockedUpdateAmout: func(id int, amount int) error {
-						reqUser.Amount = reqUser.Amount + amount
-						mockedUpdateAmout(reqUser.ID, amount)
-						return errors.New("failed Upadating amount")
 					},
 				},
 			},
