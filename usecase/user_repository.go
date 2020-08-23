@@ -9,6 +9,7 @@ import (
 type UserRepository interface {
 	Add(domain.User) (int, error)
 	FindById(int) (domain.User, error)
-	Points(domain.User) (int, error)
-	UpdateAmout(*sql.Tx, int, int) error
+	AddPoints(domain.User) (int, error)
+	UpdateAmount(*sql.Tx, int, int) error
+	AddPointHistory(*sql.Tx, int, int) error
 }

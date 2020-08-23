@@ -11,9 +11,11 @@ import (
 
 type mockUserRepository struct {
 	UserRepository
-	mockedAdd      func(u domain.User) (int, error)
-	mockedFindById func(int) (domain.User, error)
-	mockedPoints   func(u domain.User) (int, error)
+	mockedAdd             func(u domain.User) (int, error)
+	mockedFindById        func(int) (domain.User, error)
+	mockedPoints          func(u domain.User) (int, error)
+	mockedUpdateAmout     func(int, int) error // TODO(Sho): ここにmock用のメソッドを書き込む。
+	mockedAddPointHistory func(int, int) error // TODO(Sho): ここにmock用のメソッドを書き込む。
 }
 
 func (m *mockUserRepository) Add(u domain.User) (int, error) {
@@ -24,12 +26,16 @@ func (m *mockUserRepository) FindById(i int) (domain.User, error) {
 	return m.mockedFindById(i)
 }
 
-func (m *mockUserRepository) Points(u domain.User) (int, error) {
+func (m *mockUserRepository) AddPoints(u domain.User) (int, error) {
 	return m.mockedPoints(u)
 }
 
-func (m *mockUserRepository) UpdateAmount(tx *sql.Tx) error {
-	panic("panic test")
+func (m *mockUserRepository) UpdateAmount(tx *sql.Tx, newAmount int, userID int) error {
+	return m.mockedUpdateAmout(newAmount, userID)
+}
+
+func (m *mockUserRepository) AddPointHistory(tx *sql.Tx, userID int, AddedAmount int) error {
+	return m.mockedAddPointHistory(userID, AddedAmount)
 }
 
 func TestUserInteractor_Add(t *testing.T) {
@@ -158,7 +164,7 @@ func TestUserInteractor_Show(t *testing.T) {
 	}
 
 }
-func TestUserInteractor_Points(t *testing.T) {
+func TestUserInteractor_AddPoints(t *testing.T) {
 	reqUser := domain.User{
 		ID:     1,
 		Amount: 50,
@@ -183,7 +189,8 @@ func TestUserInteractor_Points(t *testing.T) {
 					mockedFindById: func(i int) (domain.User, error) {
 						return reqUser, nil
 					},
-					mockedPoints: func(u domain.User) (int, error) {
+					mockedPoints: func(u domain.User) (int, error) { // TODO(Sho): ここにUpdateAmountMethodとAddPointHistoryメソッドを入れる。
+
 						reqUser.Amount = reqUser.Amount + u.Amount
 						return reqUser.ID, nil
 					},
@@ -203,11 +210,17 @@ func TestUserInteractor_Points(t *testing.T) {
 						return reqUser, nil
 					},
 					mockedPoints: func(u domain.User) (int, error) {
+
 						return reqUser.ID, errors.New("failed adding points")
+					},
+					mockedUpdateAmout: func(id int, amount int) error {
+						reqUser.Amount = reqUser.Amount + amount
+						mockedUpdateAmout(reqUser.ID, amount)
+						return errors.New("failed Upadating amount")
 					},
 				},
 			},
-			resultUser,
+			reqUser,
 			true,
 		},
 	}
@@ -215,7 +228,7 @@ func TestUserInteractor_Points(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotUser, err := tt.interactor.Add(reqUser)
-			pointResult, err := tt.interactor.Points(domain.User{ID: gotUser.ID, Amount: 50})
+			pointResult, err := tt.interactor.AddPoints(domain.User{ID: gotUser.ID, Amount: 50})
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Add() got err = %v, wantErr = %v", err, tt.wantErr)
 			}

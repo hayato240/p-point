@@ -56,7 +56,7 @@ func (repo *UserRepository) FindById(identifier int) (domain.User, error) {
 	return user, nil
 }
 
-func (repo *UserRepository) Points(u domain.User) (id int, err error) {
+func (repo *UserRepository) AddPoints(u domain.User) (id int, err error) {
 	err = repo.SqlHandler.Transaction(func(tx *sql.Tx) error {
 		user, err := repo.FindById(u.ID)
 		if err != nil {
@@ -69,7 +69,7 @@ func (repo *UserRepository) Points(u domain.User) (id int, err error) {
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec("INSERT INTO point_histories (user_id, amount) VALUES (?, ?)", user.ID, u.Amount) // TODO(Sho): method化 7/18
+		err = repo.AddPointHistory(tx, user.ID, u.Amount)
 		if err != nil {
 			return err
 		}
@@ -87,6 +87,7 @@ func (repo *UserRepository) UpdateAmount(tx *sql.Tx, newAmount int, userID int) 
 	return err
 }
 
-func (repo *UserRepository) AddPointHistory() {
-
+func (repo *UserRepository) AddPointHistory(tx *sql.Tx, userID int, addedAmount int) error {
+	_, err := tx.Exec("INSERT INTO point_histories (user_id, amount) VALUES (?, ?)", userID, addedAmount) // TODO(Sho): method化 7/18
+	return err
 }

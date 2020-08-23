@@ -12,6 +12,6 @@ func init() {
 	userController := controllers.NewUserController(NewSqlHandler())
 	router.POST("/users", func(c *gin.Context) { userController.Create(c) })
 	router.GET("/users/:id", func(c *gin.Context) { userController.Show(c) })
-	router.POST("/users/:id/points", func(c *gin.Context) { userController.Points(c) })
+	router.POST("/users/:id/points", func(c *gin.Context) { userController.AddPoints(c) })
 	Router = router
 }

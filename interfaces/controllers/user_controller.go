@@ -53,7 +53,7 @@ func (controller *UserController) Show(c Context) {
 	c.JSON(200, user)
 }
 
-func (controller *UserController) Points(c Context) {
+func (controller *UserController) AddPoints(c Context) {
 	u := domain.User{}
 	c.Bind(&u)
 
@@ -71,7 +71,7 @@ func (controller *UserController) Points(c Context) {
 		return
 	}
 
-	user, err := controller.Interactor.Points(u)
+	user, err := controller.Interactor.AddPoints(u)
 	if err != nil {
 		c.JSON(500, err)
 		return

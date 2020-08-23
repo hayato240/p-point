@@ -28,8 +28,8 @@ func (interactor *UserInteractor) Show(id int) (user domain.User, err error) {
 	return user, nil
 }
 
-func (interactor *UserInteractor) Points(u domain.User) (user domain.User, err error) {
-	identify, err := interactor.UserRepository.Points(u)
+func (interactor *UserInteractor) AddPoints(u domain.User) (user domain.User, err error) {
+	identify, err := interactor.UserRepository.AddPoints(u)
 	if err != nil {
 		return user, err
 	}
